@@ -29,6 +29,18 @@ def get_reservation(reservation_id, trip_id):
     except Exception as e:
         return f"Error fetching reservation: {str(e)}"
 
+def update_flight_status(flight_id, status):
+    try:
+        dynamodb.update_item(
+            TableName='GetFlightStatus',
+            Key={'FlightID': {'S': flight_id}},
+            UpdateExpression='SET FlightStatus = :s',
+            ExpressionAttributeValues={':s': {'S': status}}
+        )
+        return "Flight status updated successfully!"
+    except Exception as e:
+        return f"Error updating flight status: {str(e)}"
+
 # Streamlit app
 st.title("Flight Reservation System")
 
@@ -70,6 +82,11 @@ if action == "Book a Flight":
 
         result = create_reservation(data)
         st.write(result)
+
+        if booking_status == "Confirmed":
+            # Update the flight status table
+            update_result = update_flight_status(flight_number, "Booked")
+            st.write(update_result)
 
 if action == "View Reservation Details":
     st.header("View Reservation Details")
