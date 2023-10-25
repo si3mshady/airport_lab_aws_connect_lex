@@ -45,7 +45,9 @@ def update_flight_status(flight_id, status):
 st.title("Flight Reservation System")
 
 # Select an action
-action = st.selectbox("Select an action", ["Book a Flight", "View Reservation Details"])
+action = st.selectbox("Select an action", ["Book a Flight","View Reservation Details","Change Flight Reservation","Cancel Flight Reservation"])
+
+
 
 if action == "Book a Flight":
     st.header("Book a Flight")
