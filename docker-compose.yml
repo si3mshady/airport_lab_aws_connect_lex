@@ -1,0 +1,10 @@
+version: '3'
+services:
+  streamlit-app:
+    build:
+      context: .  # Path to your app's directory
+    ports:
+      - "8501:8501"  # Expose Streamlit on port 8501
+    environment:
+      AWS_ACCESS_KEY_ID: AKIAU4AW7XCWZZD5N3MB  # Set your AWS credentials
+      AWS_SECRET_ACCESS_KEY: iZcLIMu0DueL/+LJsOeCqSqYFXWK1ku/bGAFdSoL
