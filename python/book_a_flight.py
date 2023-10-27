@@ -5,6 +5,109 @@ import boto3
 REGION = "us-east-1"
 dynamodb = boto3.client('dynamodb', region_name=REGION)  # Replace 'your-region' with your AWS region
 
+def reservation_exists(reservation_id, trip_id):
+    try:
+        response = dynamodb.get_item(
+            TableName='BookAFlight',
+            Key={
+                'ReservationID': {'S': reservation_id},
+                'TripID': {'S': trip_id}
+            }
+        )
+        return 'Item' in response
+    except Exception as e:
+        return False
+
+# Function to retrieve all data related to a reservation
+def get_reservation_data(reservation_id, trip_id):
+    try:
+        response = dynamodb.get_item(
+            TableName='BookAFlight',
+            Key={
+                'ReservationID': {'S': reservation_id},
+                'TripID': {'S': trip_id}
+            }
+        )
+        return response.get('Item')
+    except Exception as e:
+        return None
+
+# Function to delete a reservation from the 'BookAFlight' table
+def cancel_reservation(reservation_id, trip_id):
+    if reservation_exists(reservation_id, trip_id):
+        try:
+            dynamodb.delete_item(
+                TableName='BookAFlight',
+                Key={
+                    'ReservationID': {'S': reservation_id},
+                    'TripID': {'S': trip_id}
+                }
+            )
+            return "Reservation canceled successfully!"
+        except Exception as e:
+            return f"Error canceling reservation: {str(e)}"
+    else:
+        return "Reservation does not exist."
+
+
+def get_flight_reservation(reservation_id, trip_id):
+    try:
+        response = dynamodb.get_item(
+            TableName='BookAFlight',
+            Key={
+                'ReservationID': {'S': reservation_id},
+                'TripID': {'S': trip_id}
+            }
+        )
+        item = response.get('Item')
+        if item:
+            reservation_data = {
+                'ReservationID': item.get('ReservationID').get('S'),
+                'TripID': item.get('TripID').get('S'),
+                'PassengerInfo': item.get('PassengerInfo').get('M'),
+                'FlightDetails': item.get('FlightDetails').get('M'),
+                'BookingStatus': item.get('BookingStatus').get('S')
+            }
+            return reservation_data
+        else:
+            return None
+    except Exception as e:
+        return None
+
+# Function to check if a reservation exists in the 'BookAFlight' table
+def reservation_exists(reservation_id, trip_id):
+    try:
+        response = dynamodb.get_item(
+            TableName='BookAFlight',
+            Key={
+                'ReservationID': {'S': reservation_id},
+                'TripID': {'S': trip_id}
+            }
+        )
+        return 'Item' in response
+    except Exception as e:
+        return False
+
+# Function to delete a reservation from the 'BookAFlight' table
+def cancel_reservation(reservation_id, trip_id):
+    if reservation_exists(reservation_id, trip_id):
+        try:
+            dynamodb.delete_item(
+                TableName='BookAFlight',
+                Key={
+                    'ReservationID': {'S': reservation_id},
+                    'TripID': {'S': trip_id}
+                }
+            )
+            return "Reservation canceled successfully!"
+        except Exception as e:
+            return f"Error canceling reservation: {str(e)}"
+    else:
+        return "Reservation does not exist."
+
+
+
+
 # Function to interact with DynamoDB
 def create_reservation(data):
     try:
@@ -45,7 +148,7 @@ def update_flight_status(flight_id, status):
 st.title("Flight Reservation System")
 
 # Select an action
-action = st.selectbox("Select an action", ["Book a Flight","View Reservation Details","Change Flight Reservation","Cancel Flight Reservation"])
+action = st.selectbox("Select an action", ["Book a Flight","View Reservation Details","Cancel Flight Reservation"])
 
 
 
@@ -95,15 +198,33 @@ if action == "View Reservation Details":
     reservation_id = st.text_input("Reservation ID")
     trip_id = st.text_input("Trip ID")
 
-    if st.button("View Reservation"):
-        reservation_data = get_reservation(reservation_id, trip_id)
+    if st.button("Retrieve Data"):
+        reservation_data = get_reservation_data(reservation_id, trip_id)
         if reservation_data:
-            passenger_info = reservation_data.get('PassengerInfo').get('M')
-            flight_details = reservation_data.get('FlightDetails').get('M')
-            booking_status = reservation_data.get('BookingStatus').get('S')
-
-            st.write("Passenger Info:", passenger_info)
-            st.write("Flight Details:", flight_details)
-            st.write(f"Booking Status: {booking_status}")
+            st.subheader("Reservation Data:")
+            passenger_info = reservation_data['PassengerInfo']['M']
+            flight_details = reservation_data['FlightDetails']['M']
+            st.write(f"Reservation ID: {reservation_data['ReservationID']['S']}")
+            st.write(f"Trip ID: {reservation_data['TripID']['S']}")
+            st.write(f"Booking Status: {reservation_data['BookingStatus']['S']}")
+            st.subheader("Passenger Info:")
+            st.write(f"Passenger Name: {passenger_info['PassengerName']['S']}")
+            st.write(f"Passenger Age: {passenger_info['PassengerAge']['N']}")
+            st.write(f"Passenger Gender: {passenger_info['PassengerGender']['S']}")
+            st.subheader("Flight Details:")
+            st.write(f"Flight Number: {flight_details['FlightNumber']['S']}")
+            st.write(f"Departure Airport: {flight_details['DepartureAirport']['S']}")
+            st.write(f"Arrival Airport: {flight_details['ArrivalAirport']['S']}")
         else:
             st.write("Reservation not found")
+
+
+if action == "Cancel Flight Reservation":
+    st.header("Cancel Flight Reservation")
+    reservation_id = st.text_input("Reservation ID")
+    trip_id = st.text_input("Trip ID")
+
+    if st.button("Cancel Reservation"):
+        result = cancel_reservation(reservation_id, trip_id)
+        st.write(result)
+
