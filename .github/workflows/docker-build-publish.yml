@@ -27,4 +27,4 @@ jobs:
             DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
             DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         env:
-          MY_ENV_VAR: "my-value"
+          MY_ENV_VAR: "test"
