@@ -6,5 +6,5 @@ services:
     ports:
       - "8501:8501"  # Expose Streamlit on port 8501
     environment:
-      AWS_ACCESS_KEY_ID:   # Set your AWS credentials
-      AWS_SECRET_ACCESS_KEY: 
+      AWS_ACCESS_KEY_ID:  
+      AWS_SECRET_ACCESS_KEY: test

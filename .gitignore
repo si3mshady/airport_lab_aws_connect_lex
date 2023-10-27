@@ -5,6 +5,10 @@
 *.tfstate
 *.tfstate.*
 
+./docker-compose.yml
+
+*docker-compose*
+
 # Crash log files
 crash.log
 crash.*.log
