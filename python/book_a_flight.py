@@ -1,9 +1,23 @@
 import streamlit as st
-import boto3
+import boto3, os
 
 # Initialize the DynamoDB client
 REGION = "us-east-1"
-dynamodb = boto3.client('dynamodb', region_name=REGION)  # Replace 'your-region' with your AWS region
+
+aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
+aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+
+# Initialize the DynamoDB client with or without AWS credentials
+if aws_access_key and aws_secret_key:
+    dynamodb = boto3.client(
+        'dynamodb',
+        region_name=REGION,
+        aws_access_key_id=aws_access_key,
+        aws_secret_access_key=aws_secret_key
+    )
+else:
+    dynamodb = boto3.client('dynamodb', region_name=REGION)
+
 
 def reservation_exists(reservation_id, trip_id):
     try:
