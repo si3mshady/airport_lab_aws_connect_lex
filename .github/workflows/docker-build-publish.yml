@@ -32,7 +32,6 @@ jobs:
            docker build -t si3mshady/rsvp:latest \
             --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
             --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" .
-
           # Push the Docker image to Docker Hub
           docker push si3mshady/rsvp:latest
         env:
