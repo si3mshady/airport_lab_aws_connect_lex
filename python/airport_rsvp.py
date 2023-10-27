@@ -1,5 +1,7 @@
 import streamlit as st
 import boto3, os
+from make_ddb_tables import setup
+
 
 # Initialize the DynamoDB client
 REGION = "us-east-1"
@@ -17,6 +19,18 @@ if aws_access_key and aws_secret_key:
     )
 else:
     dynamodb = boto3.client('dynamodb', region_name=REGION)
+
+
+def check_and_create_tables():
+    table_names = ['BookAFlight', 'GetFlightStatus', 'GetReservationDetails']
+    existing_tables = dynamodb.list_tables()['TableNames']
+    for table_name in table_names:
+        if table_name not in existing_tables:
+            setup()
+            break
+
+# Call the function to check and create tables
+check_and_create_tables()
 
 
 def reservation_exists(reservation_id, trip_id):
