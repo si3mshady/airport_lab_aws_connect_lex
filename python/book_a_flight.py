@@ -74,19 +74,19 @@ def get_flight_reservation(reservation_id, trip_id):
     except Exception as e:
         return None
 
-# Function to check if a reservation exists in the 'BookAFlight' table
-def reservation_exists(reservation_id, trip_id):
-    try:
-        response = dynamodb.get_item(
-            TableName='BookAFlight',
-            Key={
-                'ReservationID': {'S': reservation_id},
-                'TripID': {'S': trip_id}
-            }
-        )
-        return 'Item' in response
-    except Exception as e:
-        return False
+# # Function to check if a reservation exists in the 'BookAFlight' table
+# def reservation_exists(reservation_id, trip_id):
+#     try:
+#         response = dynamodb.get_item(
+#             TableName='BookAFlight',
+#             Key={
+#                 'ReservationID': {'S': reservation_id},
+#                 'TripID': {'S': trip_id}
+#             }
+#         )
+#         return 'Item' in response
+#     except Exception as e:
+#         return False
 
 # Function to delete a reservation from the 'BookAFlight' table
 def cancel_reservation(reservation_id, trip_id):
